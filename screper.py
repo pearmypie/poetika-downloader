@@ -72,9 +72,11 @@ def main():
     stop_time = time.time()
     time_elapsed = stop_time - start_time
 
-    print("Finished!" + " Time elapsed: " + str(trunc(time_elapsed/60)) + " minutes.")
+    minutes, seconds = divmod(time_elapsed, 60)
+    print("Finished!" + " Time elapsed: " + str(minutes) + " minutes and " + str(seconds) + " seconds.")
     print(f"{counter} poems downloaded from {author_name}.")
 
 
 if __name__ == "__main__":
     main()
+    input("Press Enter to exit...")
