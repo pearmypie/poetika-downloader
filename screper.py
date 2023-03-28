@@ -3,55 +3,78 @@
 
 import requests
 import time
+import os
 from bs4 import BeautifulSoup
+from math import trunc
 
-start_time = time.time()
 
-site = "https://поэтика.рф"
-url = "https://поэтика.рф/поэты/рыжий/сборники-стихов/все"
+def main():
+    start_time = time.time()
 
-html = requests.get(url).content
-data = BeautifulSoup(html, 'html.parser')
+    try:
+        sleep_time = float(input("Enter sleep time (seconds): "))
+        author_name = input("Enter author name: ")
+    except:
+        print("Author name or sleep time is not valid!")
+        return
+    
+    site = "https://поэтика.рф"
+    url = f"https://поэтика.рф/поэты/{author_name}/сборники-стихов/все"
+    path = f"{author_name}"
 
-li_items = data.find_all('li', {'class': 'node-item'})
+    if not os.path.exists(path):
+        os.makedirs(path)
 
-counter = 0
-forbidden_characters = ['<', '>', ':', '"', '/', '\', '|', '?', '*']
+    html = requests.get(url).content
+    data = BeautifulSoup(html, 'html.parser')
 
-for li in li_items:
-    print("Starting!")
+    li_items = data.find_all('li', {'class': 'node-item'})
 
-    total = len(li_items)
+    counter = 0
+    forbidden_characters = ['<', '>', ':', '"', '/', '\\', '|', '?', '*'] # Windows forbidden characters
 
-    for a in li.find_all('a'):
-        poem_title = a.text.strip()
-        href = a.get('href')
-        poem_url = site + href
-        
-        for forbidden_character in forbidden_characters:
-            poem_title = poem_title.replace(forbidden_character, '_')
+    for li in li_items:
+        print("Starting!")
+        total = len(li_items)
 
-        print("Downloading: " + poem_title)
+        if total > 500:
+            print("Warning: more than 500 poems found! This may take a while.")
+            print("Press Ctrl+C to stop the process.")
+            _ = input("Press Enter to continue...")
 
-        with open(f"{poem_title}.txt", "w", encoding='utf-8') as f:
-            time.sleep(5)
-            poem_html = requests.get(poem_url).content
-            poem_data = BeautifulSoup(poem_html, 'html.parser')
+        for a in li.find_all('a'):
+            poem_title = a.text.strip()
+            href = a.get('href')
+            poem_url = site + href
+            
+            for forbidden_character in forbidden_characters:
+                poem_title = poem_title.replace(forbidden_character, '_')
 
-            poem_div = poem_data.find('div', {'class': 'content clearfix'})
+            print("Downloading: " + poem_title)
 
-            try:
-                paragraphs = poem_div.find_all('p')
-                for p in paragraphs:
-                    f.write(p.text.strip())
-            except:
-                print("Error: " + poem_title)
-        
-        counter += 1
+            with open(f"{poem_title}.txt", "w", encoding='utf-8') as f:
+                time.sleep(sleep_time)
+                poem_html = requests.get(poem_url).content
+                poem_data = BeautifulSoup(poem_html, 'html.parser')
 
-        print("Done! " + str(counter) + " of " + str(total) + " poems downloaded.")
+                poem_div = poem_data.find('div', {'class': 'content clearfix'})
 
-stop_time = time.time()
-time_elapsed = stop_time - start_time
+                try:
+                    paragraphs = poem_div.find_all('p')
+                    for p in paragraphs:
+                        f.write(p.text.strip())
+                except:
+                    print("Error: " + poem_title)
+            
+            counter += 1
+            print("Done! " + str(counter) + " of " + str(total) + " poems downloaded (" + str(trunc((counter*100)/total)) + " % complete)")
 
-print("Finished!" + " Time elapsed: " + str(time_elapsed) + " seconds.")
+    stop_time = time.time()
+    time_elapsed = stop_time - start_time
+
+    print("Finished!" + " Time elapsed: " + str(trunc(time_elapsed/60)) + " minutes.")
+    print(f"{counter} poems downloaded from {author_name}.")
+
+
+if __name__ == "__main__":
+    main()
