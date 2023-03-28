@@ -1,3 +1,6 @@
+# Catană Ioan-Alexandru
+# 28.03.2023
+
 import requests
 import time
 from bs4 import BeautifulSoup
@@ -13,6 +16,7 @@ data = BeautifulSoup(html, 'html.parser')
 li_items = data.find_all('li', {'class': 'node-item'})
 
 counter = 0
+forbidden_characters = ['<', '>', ':', '"', '/', '\', '|', '?', '*']
 
 for li in li_items:
     print("Starting!")
@@ -21,13 +25,11 @@ for li in li_items:
 
     for a in li.find_all('a'):
         poem_title = a.text.strip()
-        # print(poem_title)
         href = a.get('href')
         poem_url = site + href
-        # print(poem_url)
-
-        poem_title = poem_title.replace('?', '_')
-        poem_title = poem_title.replace(':', '_')
+        
+        for forbidden_character in forbidden_characters:
+            poem_title = poem_title.replace(forbidden_character, '_')
 
         print("Downloading: " + poem_title)
 
