@@ -73,7 +73,7 @@ def main():
     time_elapsed = stop_time - start_time
 
     minutes, seconds = divmod(time_elapsed, 60)
-    print("Finished!" + " Time elapsed: " + str(minutes) + " minutes and " + str(seconds) + " seconds.")
+    print("Finished!" + " Time elapsed: " + str(trunc(minutes)) + " minutes and " + str(trunc(seconds)) + " seconds.")
     print(f"{counter} poems downloaded from {author_name}.")
 
 
