@@ -31,16 +31,15 @@ def main():
 
     counter = 0
     forbidden_characters = ['<', '>', ':', '"', '/', '\\', '|', '?', '*'] # Windows forbidden characters
+    total = len(li_items)
+    if total > 500:
+        print("Warning: more than 500 poems found! This may take a while.")
+        print("Press Ctrl+C to stop the process.")
+        _ = input("Press Enter to continue...")
 
     for li in li_items:
         print("Starting!")
-        total = len(li_items)
-
-        if total > 500:
-            print("Warning: more than 500 poems found! This may take a while.")
-            print("Press Ctrl+C to stop the process.")
-            _ = input("Press Enter to continue...")
-
+        
         for a in li.find_all('a'):
             poem_title = a.text.strip()
             href = a.get('href')
@@ -61,7 +60,8 @@ def main():
                 try:
                     paragraphs = poem_div.find_all('p')
                     for p in paragraphs:
-                        f.write(p.text.strip())
+                        paragraph_text = p.text.strip().replace("\r", "")
+                        f.write(paragraph_text)
                 except:
                     print("Error: " + poem_title)
             
