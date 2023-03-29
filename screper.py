@@ -20,7 +20,6 @@ def main():
     
     site = "https://поэтика.рф"
     url = f"https://поэтика.рф/поэты/{author_name}/сборники-стихов/все"
-    path = f"{author_name}"
 
     if not os.path.exists(path):
         os.makedirs(path)
@@ -52,7 +51,7 @@ def main():
 
             print("Downloading: " + poem_title)
 
-            with open(f"{poem_title}.txt", "w", encoding='utf-8') as f:
+            with open(f"{author_name}\\{poem_title}.txt", "w", encoding='utf-8') as f:
                 time.sleep(sleep_time)
                 poem_html = requests.get(poem_url).content
                 poem_data = BeautifulSoup(poem_html, 'html.parser')
