@@ -21,8 +21,8 @@ def main():
     site = "https://поэтика.рф"
     url = f"https://поэтика.рф/поэты/{author_name}/сборники-стихов/все"
 
-    if not os.path.exists(path):
-        os.makedirs(path)
+    if not os.path.exists(author_name):
+        os.makedirs(author_name)
 
     html = requests.get(url).content
     data = BeautifulSoup(html, 'html.parser')
