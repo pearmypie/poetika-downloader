@@ -4,6 +4,7 @@
 import requests
 import time
 import os
+from platform import system
 from bs4 import BeautifulSoup
 from math import trunc
 
@@ -79,3 +80,6 @@ def main():
 if __name__ == "__main__":
     main()
     input("Press Enter to exit...")
+
+    if system().lower() != "linux":
+        print("Install Linux!")
